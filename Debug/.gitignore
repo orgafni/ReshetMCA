@@ -1,2 +1,5 @@
 *.d
 *.o
+*.mk
+/makefile
+/ClientMCA
