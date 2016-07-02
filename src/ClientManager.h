@@ -37,12 +37,71 @@ public:
 	void closeSession();
 	void close();
 
+	/** ====== function called from CommandDispatcher **/
+
+	/**
+	 * The session with the client closed
+	 */
+	void sessionWithPeerClosed();
+
+	/**
+	 * A user left the room that the client is connected to
+	 */
+	void userLeftRoom();
+
+	/**
+	 * A new user enter the room you connected to
+	 */
+	void userEnterRoom();
+
+	/**
+	 * Session with another peer is established
+	 */
+	void sessionWithPeerOpened();
+
+	/**
+	 * the client is disconnected from server
+	 */
+	void disconnectedFromServer();
+
+	/**
+	 * sign up to server success
+	 */
+	void signUpSuccess();
+
+	/**
+	 * All users received from server
+	 */
+	void receivedAllUsers();
+
+	/**
+	 * All  connected users received from server
+	 */
+	void receivedAllConnectedUsers();
+
+	/**
+	 * All rooms received from server
+	 */
+	void receivedAllRooms();
+
+	/**
+	 * All users in room received from server
+	 */
+	void receivedAllUsersInRoom();
+
+	void connectedToRoomSuccessfully();
+
 private:
 
 	/**
 	 * Read incoming command from server
 	 */
 	int readCommand();
+
+	/**
+	 * Read incoming data from server
+	 */
+	string readData();
 
 	/**
 	 * send the given command to the server
@@ -59,17 +118,25 @@ private:
 	 */
 	void sendUDPMessage(string message, string port, string ip);
 
+	/**
+	 * Remove a peer from the peers list
+	 */
+	void removePeer(string closingUserDetails);
+
+	/**
+	 * Remove all peers from the peers list
+	 */
+	void deleteAllPeers();
+
 private:
 	bool isConnected;
 	bool isInSession;
 	bool isInRoom;
 	bool isConnectedToClient;
 	int  m_port;
-	int m_peerPort;
 	string m_username;
 	string m_password;
 	string m_peerName;
-	string m_peerIP;
 	string m_chatRoomName;
 	UDPMessenger* m_udpMessenger;
 	TCPSocket* m_tcpSocket;
