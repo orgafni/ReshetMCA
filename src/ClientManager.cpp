@@ -16,9 +16,11 @@ ClientManager::ClientManager()
 	this->m_tcpSocket = NULL;
 	this->m_udpMessenger = NULL;
 	this->m_port = 0;
-	this->m_peerPort = 0;
 	this->isConnected = false;
 	this->isInSession = false;
+	this->isConnectedToClient = false;
+	this->isInRoom = false;
+
 }
 
 void ClientManager::connectToServer(string serverIp)
@@ -145,6 +147,21 @@ void ClientManager::enterAChatRoom(string chatRoom)
 	}
 
 	sendCommand(ENTER_ROOM);
+	sendData(chatRoom);
+
+	m_chatRoomName = chatRoom;
+
+}
+
+void ClientManager::createAChatRoom(string chatRoom)
+{
+	if (!isConnected)
+	{
+		cout << "you aren't connected to server" << endl;
+		return;
+	}
+
+	sendCommand(OPEN_ROOM);
 	sendData(chatRoom);
 
 	m_chatRoomName = chatRoom;
@@ -305,7 +322,7 @@ void ClientManager::sessionWithPeerClosed()
 	string closingUserDetails = readData();
 	if (isConnectedToClient == false)
 	{
-		cout << "session closed, but the client is not connected to another client..." >> endl;
+		cout << "session closed, but the client is not connected to another client..." << endl;
 		return;
 	}
 
@@ -476,7 +493,7 @@ void ClientManager::receivedAllUsersInRoom()
 	string allUsersInRoom= readData();
 	if (allUsersInRoom == "")
 	{
-		cout << "There are no rooms in the server" << endl;
+		cout << "There are no users in the requested room" << endl;
 	}
 	else
 	{
@@ -508,6 +525,15 @@ void ClientManager::connectedToRoomSuccessfully()
 
 	cout << "You successfully connected to the room: <" << m_chatRoomName << ">" << endl;
 
+	isInRoom = true;
+	isInSession = true;
+}
+
+void ClientManager::roomOpened()
+{
+	m_chatRoomName = readData();
+
+	cout << "You successfully created the room <" << m_chatRoomName << ">" << endl;
 	isInRoom = true;
 	isInSession = true;
 }

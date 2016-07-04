@@ -32,6 +32,7 @@ public:
 	void registerToServer(string userName, string password);
 	void openASessionWithUserName(string userName);
 	void enterAChatRoom(string chatRoom);
+	void createAChatRoom(string chatRoom);
 	void sendAMessage(string message);
 	void printCurrStatus();
 	void closeSession();
@@ -89,7 +90,15 @@ public:
 	 */
 	void receivedAllUsersInRoom();
 
+	/**
+	 * The user connected to a room successfully
+	 */
 	void connectedToRoomSuccessfully();
+
+	/**
+	 * You successfully opened a room
+	 */
+	void roomOpened();
 
 private:
 

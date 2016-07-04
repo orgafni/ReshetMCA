@@ -19,6 +19,7 @@ const char* CLIENT_CLI_loginToServer = "login";
 const char* CLIENT_CLI_registerToServer = "register";
 const char* CLIENT_CLI_openSessionWithUser = "o";
 const char* CLIENT_CLI_enterAChatRoom = "or";
+const char* CLIENT_CLI_createAChatRoom = "cr";
 const char* CLIENT_CLI_sendAMessage= "s";
 const char* CLIENT_CLI_printCurrStatus = "l";
 const char* CLIENT_CLI_disconnectTheOpenSession = "cs";
@@ -38,6 +39,7 @@ void printMenu()
 	cout << "%s - create a new user" << CLIENT_CLI_registerToServer <<endl;
 	cout << "%s - open session with a user" << CLIENT_CLI_openSessionWithUser <<endl;
 	cout << "%s - enter a chat room" << CLIENT_CLI_enterAChatRoom <<endl;
+	cout << "%s - create a chat room" << CLIENT_CLI_createAChatRoom <<endl;
 	cout << "%s - send message to a user" << CLIENT_CLI_sendAMessage <<endl;
 	cout << "%s	- prints the current status of the client" << CLIENT_CLI_printCurrStatus <<endl;
 	cout << "%s - close current session/exit a chat room" << CLIENT_CLI_disconnectTheOpenSession <<endl;
@@ -112,6 +114,12 @@ int main()
 			string chatRoom;
 			cin >> chatRoom;
 			messenger->enterAChatRoom(chatRoom);
+		}
+		else if (command == CLIENT_CLI_createAChatRoom)
+		{
+			string chatRoom;
+			cin >> chatRoom;
+			messenger->createAChatRoom(chatRoom);
 		}
 		else if (command == CLIENT_CLI_sendAMessage)
 		{

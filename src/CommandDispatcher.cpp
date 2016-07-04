@@ -8,6 +8,7 @@
 #include "CommandDispatcher.h"
 #include "ClientManager.h"
 #include "iostream"
+#include "TCPMessengerProtocol.h"
 
 using namespace std;
 
@@ -66,14 +67,9 @@ void CommandDispatcher::run()
 				cout << "failed to sign up to server, the user name you choose already exist (" << m_manager->m_username << ")" << endl;
 				break;
 			}
-			case(USER_NO_EXIST):
-			{
-				cout << "failed to login as <" << m_manager->m_username << ">, not exist on server" << endl;
-				break;
-			}
 			case(CONNECTION_REFUSED):
 			{
-				cout << "failed to login as <" << m_manager->m_username << ">, password not match" << endl;
+				cout << "failed to login as <" << m_manager->m_username << ">, password and user not match (or user not exists)" << endl;
 				break;
 			}
 			case(ALL_USERS):
@@ -98,7 +94,8 @@ void CommandDispatcher::run()
 			}
 			case(ROOM_NOT_EXIST):
 			{
-				cout << "room requested not exist" << endl;
+				string roomName = m_manager->readData();
+				cout << "room requested <" << roomName << "> not exists on the server" << endl;
 				break;
 			}
 			case(ROOM_EXIST):
@@ -114,6 +111,11 @@ void CommandDispatcher::run()
 			case(CONNECTED_TO_ROOM):
 			{
 				m_manager->connectedToRoomSuccessfully();
+				break;
+			}
+			case(OPEN_ROOM):
+			{
+				m_manager->roomOpened();
 				break;
 			}
 			default:
