@@ -442,7 +442,7 @@ void ClientManager::signUpSuccess()
 	isConnected = true;
 	if (m_udpMessenger == NULL)
 	{
-		m_udpMessenger == new UDPMessenger(m_port);
+		m_udpMessenger = new UDPMessenger(m_port);
 	}
 }
 
