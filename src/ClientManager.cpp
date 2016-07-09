@@ -240,9 +240,9 @@ void ClientManager::closeSession()
 
 void ClientManager::close()
 {
-	if (!isLoginToServer)
+	if (!isConnected)
 	{
-		cout << "you aren't login to a server" << endl;
+		cout << "you aren't connected to a server" << endl;
 		return;
 	}
 
