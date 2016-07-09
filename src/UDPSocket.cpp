@@ -79,6 +79,7 @@ int UDPSocket::recv(char* buffer, int length)
 	}
 	default:
 	{
+		memset(buffer, 0, length);
 		bytesReceived = recvfrom(m_socket_fd, buffer, length, 0,(struct sockaddr*)&m_from, &fromSize);
 		if (bytesReceived < 0)
 		{
