@@ -17,9 +17,11 @@ ClientManager::ClientManager()
 	this->m_udpMessenger = NULL;
 	this->m_port = 0;
 	this->isConnected = false;
+	this->isLoginToServer = false;
 	this->isInSession = false;
 	this->isConnectedToClient = false;
 	this->isInRoom = false;
+	srand(time(NULL));
 
 }
 
@@ -39,7 +41,7 @@ void ClientManager::connectToServer(string serverIp)
 		return;
 	}
 	m_tcpSocket = new TCPSocket(serverIp, MSNGR_PORT);
-	if (m_udpMessenger == NULL)
+	if (m_tcpSocket == NULL)
 	{
 		cout << "Fail to create TCP Socket" << endl;
 		return;
@@ -100,11 +102,17 @@ void ClientManager::loginToServer(string userName, string password)
 		cout << "you aren't connected to server" << endl;
 		return;
 	}
+	if (isLoginToServer)
+	{
+		cout << "you are already login to server" << endl;
+		return;
+	}
 
 	sendCommand(LOGIN);
 	ostringstream converter;
 	converter << m_port;
 	sendData(userName + ":" + password + ":" + converter.str());
+//	DEBUG_PRINT("login to server with (%s:%s:%d), port after converter (%s)\n", userName.data(), password.data(), m_port, converter.str().data());
 
 	m_username = userName;
 }
@@ -116,20 +124,26 @@ void ClientManager::registerToServer(string userName, string password)
 		cout << "you aren't connected to server" << endl;
 		return;
 	}
+	if (isLoginToServer)
+	{
+		cout << "you are already login to server" << endl;
+		return;
+	}
 
 	sendCommand(SIGNUP);
 	ostringstream converter;
 	converter << m_port;
 	sendData(userName + ":" + password + ":" + converter.str());
+//	DEBUG_PRINT("register to server with (%s:%s:%d), port after converter (%s)\n", userName.data(), password.data(), m_port, converter.str().data());
 
 	m_username = userName;
 }
 
 void ClientManager::openASessionWithUserName(string userName)
 {
-	if (!isConnected)
+	if (!isLoginToServer)
 	{
-		cout << "you aren't connected to server" << endl;
+		cout << "you aren't login to server" << endl;
 		return;
 	}
 
@@ -140,9 +154,9 @@ void ClientManager::openASessionWithUserName(string userName)
 
 void ClientManager::enterAChatRoom(string chatRoom)
 {
-	if (!isConnected)
+	if (!isLoginToServer)
 	{
-		cout << "you aren't connected to server" << endl;
+		cout << "you aren't login to server" << endl;
 		return;
 	}
 
@@ -155,9 +169,9 @@ void ClientManager::enterAChatRoom(string chatRoom)
 
 void ClientManager::createAChatRoom(string chatRoom)
 {
-	if (!isConnected)
+	if (!isLoginToServer)
 	{
-		cout << "you aren't connected to server" << endl;
+		cout << "you aren't login to server" << endl;
 		return;
 	}
 
@@ -180,6 +194,7 @@ void ClientManager::sendAMessage(string message)
 
 	for (std::map<string, Client*>::iterator user = this->m_peers.begin(); user != this->m_peers.end(); ++user)
 	{
+//		DEBUG_PRINT("sending (%s) to (%s):(%s:%s)\n", message.data(), user->second->getUserName().data(), user->second->getIP().data(), user->second->GetPort().data());
 		this->sendUDPMessage("> [" + m_username + "] " + message, user->second->GetPort(), user->second->getIP());
 	}
 }
@@ -189,6 +204,10 @@ void ClientManager::printCurrStatus()
 	if (!isConnected)
 	{
 		cout << "The client is not connected to a server" << endl;
+	}
+	else if (!isLoginToServer)
+	{
+		cout << "The client is not login to server" << endl;
 	}
 	else if (!isInSession)
 	{
@@ -221,12 +240,13 @@ void ClientManager::closeSession()
 
 void ClientManager::close()
 {
-	if (!isConnected)
+	if (!isLoginToServer)
 	{
-		cout << "you aren't connected to a server" << endl;
+		cout << "you aren't login to a server" << endl;
 		return;
 	}
 
+	isConnected = false;
 	sendCommand(DISCONNECT);
 }
 
@@ -407,6 +427,7 @@ void ClientManager::sessionWithPeerOpened()
 	deleteAllPeers();
 	m_peers[m_peerName] = otherClient;
 	cout << "session with <" << m_peerName << "> established" << endl;
+//	DEBUG_PRINT("%s details = %s\n", m_peerName.data(), otherUserDetails.data());
 }
 
 void ClientManager::disconnectedFromServer()
@@ -417,17 +438,20 @@ void ClientManager::disconnectedFromServer()
 	{
 		m_tcpSocket->close();
 		delete m_tcpSocket;
+		m_tcpSocket = NULL;
 	}
 
 	if (m_udpMessenger != NULL)
 	{
 		m_udpMessenger->close();
 		delete m_udpMessenger;
+		m_udpMessenger = NULL;
 	}
 
 	deleteAllPeers();
 	isInSession = false;
 	isConnected = false;
+	isLoginToServer = false;
 	isConnectedToClient = false;
 	isInRoom = false;
 	m_peerName = "";
@@ -439,11 +463,7 @@ void ClientManager::disconnectedFromServer()
 void ClientManager::signUpSuccess()
 {
 	cout << "You registered to server successfully" << endl;
-	isConnected = true;
-	if (m_udpMessenger == NULL)
-	{
-		m_udpMessenger = new UDPMessenger(m_port);
-	}
+	isLoginToServer = true;
 }
 
 void ClientManager::receivedAllUsers()

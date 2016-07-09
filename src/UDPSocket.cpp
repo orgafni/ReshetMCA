@@ -15,6 +15,7 @@
 #include <stdlib.h>
 #include <error.h>
 #include <errno.h>
+#include <poll.h>
 
 
 UDPSocket::UDPSocket(int port)
@@ -32,6 +33,13 @@ UDPSocket::UDPSocket(int port)
 	{
 		error(1, errno, "setsockopt(SO_REUSEADDR) failed");
 	}
+//	struct timeval tv;
+//	tv.tv_sec = 1;
+//	tv.tv_usec = 0;
+//	if (setsockopt(m_socket_fd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) < 0)
+//	{
+//		error(1, errno, "setsockopt(SO_RCVTIMEO) failed");
+//	}
 
 	// Clear and fill the s_in struct
 	struct sockaddr_in s_in;
@@ -50,13 +58,33 @@ UDPSocket::UDPSocket(int port)
 
 int UDPSocket::recv(char* buffer, int length)
 {
-	printf("UDP server receive ...\n");
+	int bytesReceived = 0;
 	socklen_t fromSize = sizeof(m_from);
-	int bytesReceived = recvfrom(m_socket_fd, buffer, length, 0,(struct sockaddr*)&m_from, &fromSize);
+	struct pollfd fd;
+	fd.fd = m_socket_fd;
+	fd.events = POLLIN;
+	int ret = poll(&fd, 1, 1000);
 
-	if (bytesReceived < 0)
+	switch(ret)
 	{
-		error(1, errno, "Fail to recvfrom");
+	case(-1):
+	{
+		error(1, errno, "fail to poll");
+		break;
+	}
+	case(0):
+	{
+
+		break;
+	}
+	default:
+	{
+		bytesReceived = recvfrom(m_socket_fd, buffer, length, 0,(struct sockaddr*)&m_from, &fromSize);
+		if (bytesReceived < 0)
+		{
+			error(1, errno, "Fail to recvfrom");
+		}
+	}
 	}
 
 	return bytesReceived;

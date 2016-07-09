@@ -17,9 +17,13 @@ class UDPMessenger: public MThread{
 	static const int MSNGR_PORT = 3344;
 	UDPSocket* m_udpSocket;
 
+private:
+	bool m_isRun;
 
 public:
 	UDPMessenger(int port);
+
+	~UDPMessenger();
 
 	/**
 	 * sends the given message to the given peer specified by IP and port

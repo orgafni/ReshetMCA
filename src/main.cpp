@@ -31,7 +31,6 @@ void printMenu()
 {
 	cout << "options:" << endl;
 	printf("%s - connect to the server\n", CLIENT_CLI_connectToServer);
-	printf("%s - connect to the server\n", CLIENT_CLI_connectToServer);
 	printf("%s - prints user names on server\n", CLIENT_CLI_listAllUsers);
 	printf("%s - prints user names available on server\n", CLIENT_CLI_listAllConnectedUsers);
 	printf("%s - print all rooms on server\n", CLIENT_CLI_listAllRooms);
@@ -152,7 +151,7 @@ int main()
 		}
 		else
 		{
-			cout << "invalid command! type %s for help" << CLIENT_CLI_help << endl;
+			printf("invalid command! type %s for help\n", CLIENT_CLI_help);
 		}
 	}
 

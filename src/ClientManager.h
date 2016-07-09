@@ -142,6 +142,7 @@ private:
 	bool isInSession;
 	bool isInRoom;
 	bool isConnectedToClient;
+	bool isLoginToServer;
 	int  m_port;
 	string m_username;
 	string m_password;

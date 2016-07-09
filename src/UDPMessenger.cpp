@@ -16,11 +16,18 @@ void UDPMessenger::run()
 {
 	// receiver thread...
 
+	m_isRun = true;
 	char receivedMsg[MAX_MESSAGE_SIZE];
-	while (m_udpSocket != NULL)
+	int receivedBytes = 0;
+	while (m_isRun)
 	{
-		m_udpSocket->recv(receivedMsg, sizeof(receivedMsg));
-		cout << "incoming msg: " << receivedMsg << endl;
+		receivedBytes = m_udpSocket->recv(receivedMsg, sizeof(receivedMsg));
+
+		if (receivedBytes > 0)
+		{
+			cout << receivedMsg << endl;
+		}
+
 	}
 	cout<<"closing receiver thread"<<endl;
 }
@@ -29,8 +36,13 @@ UDPMessenger::UDPMessenger(int port)
 {
 	// init the messenger
 	m_udpSocket = new UDPSocket(port);
-
+	m_isRun = false;
 	this->start();
+}
+
+UDPMessenger::~UDPMessenger()
+{
+	close();
 }
 
 void UDPMessenger::sendTo(string msg,string ip, int port)
@@ -45,8 +57,16 @@ void UDPMessenger::reply(string msg)
 
 void UDPMessenger::close()
 {
-	m_udpSocket->close();
-	delete m_udpSocket;
-	m_udpSocket = NULL;
+	if (m_isRun == true)
+	{
+		m_isRun = false;
+		waitForThread();
+	}
+	if (m_udpSocket != NULL)
+	{
+		m_udpSocket->close();
+		delete m_udpSocket;
+		m_udpSocket = NULL;
+	}
 }
 

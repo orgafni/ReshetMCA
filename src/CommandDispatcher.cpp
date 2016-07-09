@@ -69,7 +69,13 @@ void CommandDispatcher::run()
 			}
 			case(CONNECTION_REFUSED):
 			{
-				cout << "failed to login as <" << m_manager->m_username << ">, password and user not match (or user not exists)" << endl;
+				cout << "failed to login as <" << m_manager->m_username << ">, password and user not match (or user not exists or already connected)" << endl;
+				break;
+			}
+			case(CONNECTION_VALID):
+			{
+				cout << "succeed login as <" << m_manager->m_username << ">" << endl;
+				m_manager->isLoginToServer = true;
 				break;
 			}
 			case(ALL_USERS):
@@ -84,6 +90,12 @@ void CommandDispatcher::run()
 			}
 			case(ALL_ROOMS):
 			{
+				m_manager->receivedAllRooms();
+				break;
+			}
+			case(NO_ROOMS):
+			{
+				cout << "There are no rooms on server..." << endl;
 				m_manager->receivedAllRooms();
 				break;
 			}
@@ -105,7 +117,7 @@ void CommandDispatcher::run()
 			}
 			case(USER_NO_EXIST):
 			{
-				cout << "cannot connect to requested user name <" << m_manager->m_peerName << ">. user not exist" << endl;
+				cout << "cannot connect to requested user name <" << m_manager->m_peerName << ">. user not exist, or busy..." << endl;
 				break;
 			}
 			case(CONNECTED_TO_ROOM):
