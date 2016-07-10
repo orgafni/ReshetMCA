@@ -47,6 +47,18 @@ void CommandDispatcher::run()
 				m_manager->userEnterRoom();
 				break;
 			}
+			case(CLOSE_ROOM):
+			{
+				string roomName = m_manager->readData();
+				cout << "you closed room <" << roomName << ">" << endl;
+				break;
+			}
+			case(CLOSE_ROOM_FAIL):
+			{
+				string roomName = m_manager->readData();
+				cout << "you failed to close closed room <" << roomName << ">. probably you are not the creator." << endl;
+				break;
+			}
 			case(SESSION_ESTABLISHED):
 			{
 				m_manager->sessionWithPeerOpened();

@@ -20,6 +20,7 @@ const char* CLIENT_CLI_registerToServer = "register";
 const char* CLIENT_CLI_openSessionWithUser = "o";
 const char* CLIENT_CLI_enterAChatRoom = "or";
 const char* CLIENT_CLI_createAChatRoom = "cr";
+const char* CLIENT_CLI_closeAChatRoom = "clr";
 const char* CLIENT_CLI_sendAMessage= "s";
 const char* CLIENT_CLI_printCurrStatus = "l";
 const char* CLIENT_CLI_disconnectTheOpenSession = "cs";
@@ -40,6 +41,7 @@ void printMenu()
 	printf("%s - open session with a user\n", CLIENT_CLI_openSessionWithUser);
 	printf("%s - enter a chat room\n", CLIENT_CLI_enterAChatRoom);
 	printf("%s - create a chat room\n", CLIENT_CLI_createAChatRoom);
+	printf("%s - close a chat room\n", CLIENT_CLI_closeAChatRoom);
 	printf("%s - send message to a user\n", CLIENT_CLI_sendAMessage);
 	printf("%s	- prints the current status of the client\n", CLIENT_CLI_printCurrStatus);
 	printf("%s - close current session/exit a chat room\n", CLIENT_CLI_disconnectTheOpenSession);
@@ -120,6 +122,12 @@ int main()
 			string chatRoom;
 			cin >> chatRoom;
 			messenger->createAChatRoom(chatRoom);
+		}
+		else if (command == CLIENT_CLI_closeAChatRoom)
+		{
+			string chatRoom;
+			cin >> chatRoom;
+			messenger->closeChatRoom(chatRoom);
 		}
 		else if (command == CLIENT_CLI_sendAMessage)
 		{

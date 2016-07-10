@@ -33,6 +33,7 @@ public:
 	void openASessionWithUserName(string userName);
 	void enterAChatRoom(string chatRoom);
 	void createAChatRoom(string chatRoom);
+	void closeChatRoom(string chatRoom);
 	void sendAMessage(string message);
 	void printCurrStatus();
 	void closeSession();

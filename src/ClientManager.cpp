@@ -182,6 +182,18 @@ void ClientManager::createAChatRoom(string chatRoom)
 
 }
 
+void ClientManager::closeChatRoom(string chatRoom)
+{
+	if (!isLoginToServer)
+	{
+		cout << "you aren't login to server" << endl;
+		return;
+	}
+
+	sendCommand(CLOSE_ROOM);
+	sendData(chatRoom);
+}
+
 void ClientManager::sendAMessage(string message)
 {
 	if (!isInSession)
@@ -377,6 +389,16 @@ void ClientManager::userLeftRoom()
 	if (closingUserDetails == "me")
 	{
 		cout << "you left room <" << m_chatRoomName << ">" << endl;
+		isInRoom = false;
+		isInSession = false;
+		m_chatRoomName = "";
+
+		deleteAllPeers();
+	}
+	// If you removed from room
+	else if (closingUserDetails == "removed")
+	{
+		cout << "you removed from room <" << m_chatRoomName << ">" << endl;
 		isInRoom = false;
 		isInSession = false;
 		m_chatRoomName = "";
